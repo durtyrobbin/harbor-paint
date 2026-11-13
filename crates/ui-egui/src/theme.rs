@@ -939,7 +939,7 @@ mod tests {
         let mut width = 0.0;
         ctx.run_ui(Default::default(), |ui| {
             assert!(medium_bound(ui.ctx()), "the installed stack reaches the second pass");
-            width = ui.painter().layout_no_wrap("PhotoCraft".into(), medium(13.0), Color32::WHITE).size().x;
+            width = ui.painter().layout_no_wrap("Harbor Paint".into(), medium(13.0), Color32::WHITE).size().x;
         })
         .textures_delta
         .clear();
@@ -949,7 +949,7 @@ mod tests {
         let mut scaled = 0.0;
         ctx.run_ui(Default::default(), |ui| {
             assert!(medium_bound(ui.ctx()));
-            scaled = ui.painter().layout_no_wrap("PhotoCraft".into(), medium(13.0), Color32::WHITE).size().x;
+            scaled = ui.painter().layout_no_wrap("Harbor Paint".into(), medium(13.0), Color32::WHITE).size().x;
         })
         .textures_delta
         .clear();
@@ -959,7 +959,7 @@ mod tests {
         for _ in 0..2 {
             ctx.run_ui(Default::default(), |ui| {
                 assert!(medium_bound(ui.ctx()));
-                let w = ui.painter().layout_no_wrap("PhotoCraft".into(), medium(13.0), Color32::WHITE).size().x;
+                let w = ui.painter().layout_no_wrap("Harbor Paint".into(), medium(13.0), Color32::WHITE).size().x;
                 assert!((w - scaled).abs() < 1.0, "{w} vs {scaled}");
             })
             .textures_delta

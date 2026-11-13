@@ -441,7 +441,9 @@ fn stroke_params(app: &PhotocraftApp, tool: Tool, erase: bool, points: &[Vec<f64
     if tool == Tool::Pencil {
         p["autoErase"] = json!(app.ui.tool_options.pencil_auto_erase);
     }
-    if tool == Tool::PaletteKnife { p["knife"] = json!(app.ui.knife.settings); }
+    if tool == Tool::PaletteKnife {
+        p["knife"] = json!(app.ui.knife.settings);
+    }
     // Block mode: the engine sizes the square from the stroke's zoom (16 / zoom px, #2770).
     if crate::eraser_ui::block_mode(app, tool) {
         p["block"] = json!(true);
@@ -453,7 +455,17 @@ fn stroke_params(app: &PhotocraftApp, tool: Tool, erase: bool, points: &[Vec<f64
 pub(crate) fn strokes_live(tool: Tool) -> bool {
     matches!(
         tool,
-        Tool::Brush | Tool::Pencil | Tool::MixerBrush | Tool::PaletteKnife | Tool::Eraser | Tool::Blur | Tool::Sharpen | Tool::Smudge | Tool::Dodge | Tool::Burn | Tool::Sponge
+        Tool::Brush
+            | Tool::Pencil
+            | Tool::MixerBrush
+            | Tool::PaletteKnife
+            | Tool::Eraser
+            | Tool::Blur
+            | Tool::Sharpen
+            | Tool::Smudge
+            | Tool::Dodge
+            | Tool::Burn
+            | Tool::Sponge
     ) || live_retouch_command(tool).is_some()
 }
 
@@ -601,7 +613,9 @@ fn begin_live_stroke(app: &PhotocraftApp) -> Option<LiveStroke> {
 /// Render the drag points the live stroke hasn't seen yet, with the pen pressure, tilt and
 /// rotation the commit's `paint.stroke` gets for them.
 pub(crate) fn cancel_mixer_on_context_change(app: &mut PhotocraftApp, ctx: &egui::Context) -> bool {
-    if crate::splatter_ui::cancel_on_context_change(app, ctx) { return true; }
+    if crate::splatter_ui::cancel_on_context_change(app, ctx) {
+        return true;
+    }
     if !app.drag.as_ref().is_some_and(|drag| matches!(drag.tool, Tool::MixerBrush | Tool::PaletteKnife)) {
         return false;
     }
@@ -930,7 +944,11 @@ pub(crate) fn display_image(display: Option<&photocraft_engine::display_color::C
 /// The canvas display of `doc` on `display` (`None`: the main window's) and a key that changes
 /// with it (folded into the canvas caches' preview keys, so a monitor or profile change
 /// re-renders).
-pub(crate) fn canvas_display(app: &PhotocraftApp, doc: &Document, display: Option<u32>) -> (Option<std::sync::Arc<photocraft_engine::display_color::CanvasDisplay>>, u64) {
+pub(crate) fn canvas_display(
+    app: &PhotocraftApp,
+    doc: &Document,
+    display: Option<u32>,
+) -> (Option<std::sync::Arc<photocraft_engine::display_color::CanvasDisplay>>, u64) {
     match app.session.color.canvas_display_for(doc, display.or(app.session.color.main_display)) {
         Ok(d) => {
             let k = d.key;
@@ -2240,7 +2258,7 @@ fn start_screen(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
     ui.scope_builder(egui::UiBuilder::new().max_rect(card), |ui| {
         ui.vertical_centered(|ui| {
             ui.horizontal(|ui| {
-                let title = ui.painter().layout_no_wrap(tl!("PhotoCraft").into(), crate::theme::semibold(38.0), t.text);
+                let title = ui.painter().layout_no_wrap(tl!("Harbor Paint").into(), crate::theme::semibold(38.0), t.text);
                 let by = ui.painter().layout_no_wrap(tl!("open source").into(), egui::FontId::proportional(13.0), t.text_faint);
                 let total = title.size().x + by.size().x + 10.0;
                 ui.add_space(((card.width() - total) / 2.0).max(0.0));
@@ -2566,7 +2584,8 @@ pub fn canvas_view(app: &mut PhotocraftApp, ui: &mut egui::Ui, idx: usize, rect:
             }
         }
         if !crate::ai_results_ui::paint(app, &painter, &xf, idx, output)
-            && let Some((tex, _scale)) = ensure_texture(app, &ctx, idx, output) {
+            && let Some((tex, _scale)) = ensure_texture(app, &ctx, idx, output)
+        {
             if rotated {
                 paint_mapped_image(&painter, &xf, tex, Rect::from_min_max(Pos2::ZERO, pos2(1.0, 1.0)), size, Color32::WHITE);
             } else {
@@ -4008,12 +4027,18 @@ fn tool_move(app: &mut PhotocraftApp, x: f64, y: f64, pressure: f32, mods: egui:
 /// Tool state machine. Shared by mouse input and automation.
 pub fn tool_event(app: &mut PhotocraftApp, ev: ToolEvent, mods: egui::Modifiers) {
     if app.canvas_input_blocked_until_release {
-        if matches!(ev, ToolEvent::Up { .. }) { app.canvas_input_blocked_until_release = false; }
+        if matches!(ev, ToolEvent::Up { .. }) {
+            app.canvas_input_blocked_until_release = false;
+        }
         return;
     }
     // Document-coordinate automation must not bypass the comparison canvas.
-    if app.session.active_index().is_some_and(|idx| crate::ai_results_ui::active(app, idx)) { return; }
-    if crate::guidance_ui::tool_event(app, ev) { return; }
+    if app.session.active_index().is_some_and(|idx| crate::ai_results_ui::active(app, idx)) {
+        return;
+    }
+    if crate::guidance_ui::tool_event(app, ev) {
+        return;
+    }
     if crate::symmetry_ui::pointer(app, ev, crate::workspace_ui::sticky_mods(app, mods)) {
         return;
     }
@@ -4030,7 +4055,9 @@ pub fn tool_event(app: &mut PhotocraftApp, ev: ToolEvent, mods: egui::Modifiers)
         if let ToolEvent::Down { x, y, pressure } = ev {
             let pen = app.stylus.sample().unwrap_or_default();
             let mut p = json!({"points":[[x,y,pressure,pen.tilt_x,pen.tilt_y,pen.rotation]],"target":paint_target(app)});
-            if app.ui.tool == Tool::PaletteKnife { p["knife"] = json!(app.ui.knife.settings); }
+            if app.ui.tool == Tool::PaletteKnife {
+                p["knife"] = json!(app.ui.knife.settings);
+            }
             if let Err(e) = mixer_params(app.ui.tool, p).map_err(|e| e.to_string()).and_then(|p| app.run("brush.mixer.sample", p)) {
                 app.ui.status = e;
                 app.ui.status_error = true;
@@ -4252,10 +4279,12 @@ pub fn tool_event(app: &mut PhotocraftApp, ev: ToolEvent, mods: egui::Modifiers)
                     return;
                 }
                 Tool::Splatter if !app.ui.splatter.gesture => {
-                    crate::splatter_ui::flick(app, [x,y], None, pressure);
+                    crate::splatter_ui::flick(app, [x, y], None, pressure);
                     return;
                 }
-                Tool::Splatter => { app.ui.splatter.context = app.session.active().map(|st| (st.doc.id, st.revision)); }
+                Tool::Splatter => {
+                    app.ui.splatter.context = app.session.active().map(|st| (st.doc.id, st.revision));
+                }
                 Tool::CloneStamp | Tool::Healing if mods.alt => {
                     crate::retouch_ui::set_source(app, x, y);
                     return;
@@ -6505,7 +6534,7 @@ mod rotation_preview_isolation_tests {
             app.run("layer.new.layer", json!({})).unwrap();
             app.run("tools.setBrush", json!({"size":12,"pressureSize":false})).unwrap();
             app.ui.tool = Tool::PaletteKnife;
-        app.ui.knife.settings.width = 16.0;
+            app.ui.knife.settings.width = 16.0;
             let before = app.session.active().unwrap().doc.clone();
             let m = egui::Modifiers::NONE;
             tool_event(&mut app, ToolEvent::Down { x: 20.0, y: 30.0, pressure: 1.0 }, m);
@@ -6530,7 +6559,7 @@ mod rotation_preview_isolation_tests {
             app.run("file.new", json!({"width":120,"height":60,"background":"#00ff00"})).unwrap();
             app.run("layer.new.layer", json!({})).unwrap();
             app.ui.tool = Tool::PaletteKnife;
-        app.ui.knife.settings.width = 16.0;
+            app.ui.knife.settings.width = 16.0;
             let before = app.session.active().unwrap().doc.clone();
             let steps = app.session.active().unwrap().history.past_len();
             tool_event(&mut app, ToolEvent::Down { x: 30.0, y: 30.0, pressure: 1.0 }, egui::Modifiers::NONE);

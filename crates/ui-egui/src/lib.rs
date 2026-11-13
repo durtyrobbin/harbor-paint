@@ -19,14 +19,17 @@ pub mod adjust_dialog;
 pub mod adjust_editors;
 pub mod adjust_preview;
 pub mod adjust_ui;
+pub mod ai_results_ui;
 mod alt_grab;
 pub mod analysis_ui;
 pub mod artboard_ui;
+pub mod artist_palette;
 pub(crate) mod blend_preview;
 mod brand;
 pub mod brush_panel;
 pub mod brush_picker;
 pub mod brush_preview;
+pub mod brush_rack;
 pub mod brush_resize;
 pub mod brush_sections;
 pub mod brushes_tab;
@@ -35,7 +38,6 @@ mod camera_raw_preview_ui;
 mod camera_raw_scope_ui;
 pub mod camera_raw_ui;
 pub mod canvas;
-pub mod shared_canvas;
 pub mod canvas_tool_menu;
 pub mod channel_view;
 pub mod channels_panel;
@@ -79,11 +81,13 @@ pub mod genai_ui;
 pub mod gpu_canvas;
 pub mod gpu_status;
 pub mod gradient_ui;
+pub mod guidance_ui;
 pub mod hold_keys;
 pub mod i18n;
 mod icon_data;
 pub mod icons;
 pub mod jobs_ui;
+pub mod knife_ui;
 pub mod kys_import;
 pub mod lasso_ui;
 pub mod layer_menu_ui;
@@ -142,6 +146,7 @@ pub mod scrollbars;
 pub mod served_fonts;
 pub mod shape_dialog;
 pub mod shape_stroke_ui;
+pub mod shared_canvas;
 pub mod shortcut_dispatch;
 pub mod shortcuts;
 mod sizing;
@@ -149,10 +154,12 @@ pub mod slice_ui;
 pub mod smart_ui;
 pub mod snap_ui;
 pub(crate) mod solid_fill_ui;
+pub mod splatter_ui;
 pub mod state;
 pub mod stroke_constraint;
 pub mod stroke_trail;
 pub mod stroke_ui;
+mod studio_persist;
 pub mod stylus;
 pub mod swatches_ui;
 pub mod symmetry_ui;
@@ -161,13 +168,6 @@ pub mod theme;
 pub mod tiff_options_ui;
 mod timeline_ui;
 pub mod tip_designer;
-pub mod splatter_ui;
-pub mod knife_ui;
-pub mod artist_palette;
-pub mod ai_results_ui;
-pub mod guidance_ui;
-pub mod brush_rack;
-mod studio_persist;
 mod titlebar;
 pub mod tone;
 mod tool_cursor;
@@ -296,7 +296,8 @@ pub type SaveKeyFn = Box<dyn Fn(&str, &str) -> Result<(), String>>;
 /// Removes the key for a provider id.
 pub type DeleteKeyFn = Box<dyn Fn(&str) -> Result<(), String>>;
 /// Builds a provider (id, model, key) over the app's HTTPS transport.
-pub type BuildProviderFn = Box<dyn Fn(&str, &str, Option<photocraft_genai::ApiKey>, &serde_json::Value) -> Result<photocraft_engine::genai_cmds::SharedProvider, String>>;
+pub type BuildProviderFn =
+    Box<dyn Fn(&str, &str, Option<photocraft_genai::ApiKey>, &serde_json::Value) -> Result<photocraft_engine::genai_cmds::SharedProvider, String>>;
 
 /// Generative AI (#41): the OS credential store and the provider factory. Desktop only; `None`
 /// (the web build, tests) keeps Generative AI unavailable.
@@ -1424,7 +1425,9 @@ impl eframe::App for PhotocraftApp {
             jobs_ui::tick(self, ctx);
             #[cfg(not(target_arch = "wasm32"))]
             filter_preview_worker::discard_closed(self);
-            if self.canvas_input_blocked_until_release && !ctx.input(|i| i.pointer.primary_down() || i.pointer.primary_released()) { self.canvas_input_blocked_until_release = false; }
+            if self.canvas_input_blocked_until_release && !ctx.input(|i| i.pointer.primary_down() || i.pointer.primary_released()) {
+                self.canvas_input_blocked_until_release = false;
+            }
             guidance_ui::tick(self, ctx);
             ai_results_ui::shortcuts(self, ctx);
             shortcuts::handle(self, ctx);

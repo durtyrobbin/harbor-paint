@@ -8,7 +8,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-artcraft-canvas = { path = "../../../craft-launcher/crates/canvas" }
+artcraft-canvas = { path = "../../../harbor-studio/crates/canvas" }
 craft-ui = { workspace = true }
 photocraft-geom = { workspace = true }
 photocraft-color = { workspace = true }

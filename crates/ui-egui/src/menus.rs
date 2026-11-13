@@ -206,7 +206,9 @@ pub(crate) fn invoke_unguarded(app: &mut PhotocraftApp, ctx: &egui::Context, id:
     if let Some(r) = crate::plugin_ui::menu(app, id, &params) {
         return r;
     }
-    if let Some(r) = crate::genai_ui::menu(app, id, &params) { return r; }
+    if let Some(r) = crate::genai_ui::menu(app, id, &params) {
+        return r;
+    }
     if id == "window.panel.brushes" {
         // Window › Brushes opens the Brush Settings window on its presets tab.
         app.ui.panels.brush_settings = true;
@@ -323,8 +325,14 @@ pub(crate) fn invoke_unguarded(app: &mut PhotocraftApp, ctx: &egui::Context, id:
         }
         "file.saveAs" => app.save_as(params.get("path").and_then(Value::as_str).map(str::to_string)),
         "view.zoomIn" | "view.zoomOut" | "view.fitOnScreen" | "view.actualPixels" => app.run(id, params),
-        "window.aiResults" => { app.ui.ai_results.open = true; Ok(Value::Null) }
-        "window.aiGuidance" => { app.ui.guidance.open = true; Ok(Value::Null) }
+        "window.aiResults" => {
+            app.ui.ai_results.open = true;
+            Ok(Value::Null)
+        }
+        "window.aiGuidance" => {
+            app.ui.guidance.open = true;
+            Ok(Value::Null)
+        }
         "window.newWindowForDocument" => {
             let doc = app.session.active_index().ok_or("no document")?;
             let wid = app.ui.alloc_id();
@@ -963,7 +971,9 @@ pub fn menu_items(app: &PhotocraftApp) -> Vec<MenuItem> {
     if !prefs.menus.hidden.is_empty() {
         items.retain(|i| !prefs.menus.hidden.contains(&i.id));
     }
-    if !crate::genai_ui::menu_visible(app) { items.retain(|i| i.id != photocraft_engine::genai_cmds::FILL); }
+    if !crate::genai_ui::menu_visible(app) {
+        items.retain(|i| i.id != photocraft_engine::genai_cmds::FILL);
+    }
     if prefs.interface.show_menu_colors {
         for it in &mut items {
             it.color = prefs.menus.colors.get(&it.id).cloned();

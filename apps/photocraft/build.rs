@@ -12,8 +12,8 @@ fn main() {
         return;
     }
     let mut res = winresource::WindowsResource::new();
-    res.set_icon("../../assets/app-icon/photocraft.ico")
-        .set("ProductName", "PhotoCraft")
+    res.set_icon("../../assets/harbor/icon.ico")
+        .set("ProductName", "Harbor Paint")
         .set("FileDescription", "PhotoCraft image editor")
         .set("CompanyName", "Learning Machines LLC")
         .set("LegalCopyright", "Copyright (c) the PhotoCraft authors. MIT OR Apache-2.0.")

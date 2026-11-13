@@ -114,3 +114,5 @@ Files copied into `corpus/` by hand (tiff, exr, raw) must be MIT, BSD or CC0.
 | `presets/studio-loaded-paint/` | Loaded bristle presets and sampled masks | PhotoCraft studio implementation for durtyrobbin | `crates/engine/examples/loaded_paint_probe.rs`; existing procedural rack mask | MIT OR Apache-2.0; adjacent `LICENSE.txt` |
 | `docs/studio-evidence/loaded-paint/synthetic-source.png`, `loaded-paint-live.png`, JSON evidence | Synthetic jacket and loaded-paint validation | PhotoCraft studio implementation | Original procedural fixture, native capture and local test outputs | MIT OR Apache-2.0; adjacent `LICENSE.txt` |
 | `docs/studio-evidence/loaded-paint/owner-manual-test.png` | Owner's optimized-studio manual test | durtyrobbin | Screenshot supplied in this task on 2026-10-11 | Authorized local validation use; no broader license asserted for owner-added marks. See adjacent `LICENSE.txt`. |
+
+Harbor icons: assets/harbor/icon.png and icon.ico; original geometric H design for durtyrobbin, MIT OR Apache-2.0 (assets/harbor/LICENSE.txt).
