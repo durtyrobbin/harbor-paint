@@ -14,3 +14,7 @@ Original authorship, source history and license notices are retained. Original i
 Additional scoped checks passed: strict Clippy for the desktop app and UI (all targets), formatting after normalizing inherited whitespace, WASM UI compilation, and architecture layers (30 crates, no violations). The successful Studio host regression run also exercises the Paint UI and editable vector round trip.
 
 Final regressions: six palette-filtered engine tests and six mixer-brush tests passed. Coverage includes deposit/mix/pickup/undo/presets without document loss, floating-selection preservation, hostile palette inputs, wet/dry/load behavior, and matching a frozen mixer kernel across color models, sample depths and spatial paint loads.
+
+## Windows installer qualification — 2026-11-13
+
+The independent `packaging/harbor` Inno Setup recipe supersedes the portable-only packaging limitation above. The unsigned x64 setup passed an isolated install → same-version upgrade → uninstall round trip. The installed executable matched the staged binary's SHA-256 and an unowned synthetic document survived upgrade and uninstall. No personal documents were used. Setup registers per-user shortcuts, App Paths and an Installed apps entry; it does not forcibly close running apps or change file associations. Windows Search discovery remains unverified: `Get-StartApps` did not list the new shortcuts on the test machine.
